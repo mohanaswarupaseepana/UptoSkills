@@ -35,7 +35,7 @@
 }
 
 .card {
-  @apply bg-white rounded-xl shadow-md p-6 text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-xl cursor-pointer;
+  @apply bg-white rounded-xl shadow-md p-6 text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-xl cursor-pointer relative;
   animation: fadeIn 0.5s ease-out;
 }
 
@@ -52,50 +52,28 @@
   @apply text-gray-600;
 }
 
-/* Updated view-profile-btn styles */
 .view-profile-btn {
   @apply mt-4 bg-gray-400 text-white py-1 px-3 rounded-full text-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500;
 }
 
-/* --------- Profile Detail Page Styles --------- */
-
-/* Full page detail container: spread horizontally with padding */
-.detail-page {
-  @apply min-h-screen bg-gray-100 py-8 px-12; /* padding left & right for spread */
+/* Status Dot */
+.status-dot {
+  @apply absolute top-2 right-2 w-4 h-4 rounded-full;
+  border: 2px solid white;
 }
 
-/* Detail panel wide, with max width and padding */
-.detail-panel {
-  @apply bg-white rounded-xl w-full max-w-7xl p-10 relative shadow-lg overflow-y-auto max-h-[90vh];
-  /* max-w-7xl = 80rem (~1280px), adjust as you want */
+.status-dot.active {
+  @apply bg-green-500;
 }
 
-/* Close button top-right */
-.detail-close {
-  @apply absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold cursor-pointer;
-  background: none;
-  border: none;
+.status-dot.resigned {
+  @apply bg-red-500;
 }
 
-/* Larger avatar aligned left with margin right */
-.avatar-large {
-  @apply w-40 h-40 rounded-full object-cover float-left mr-8 mb-6;
+.status-dot.leave {
+  @apply bg-yellow-400;
 }
 
-/* Section spacing, text left aligned */
-.section {
-  @apply mt-8 clear-left;
-}
-
-.section h3 {
-  @apply text-xl font-semibold mb-4;
-}
-
-.section ul {
-  @apply list-disc list-inside text-gray-700;
-}
-
-/* Fade in animation for cards */
 @keyframes fadeIn {
   from {
     opacity: 0;
