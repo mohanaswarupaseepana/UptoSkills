@@ -1,174 +1,142 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Profiles.css';
+import { loadPosts, savePosts } from "./postStorageUtils";
 
-const mockProfiles = [
-  {
-    id: 1,
-    name: 'Alice',
-    jobTitle: 'Frontend Developer',
-    department: 'Engineering',
-    email: 'alice.johnson@example.com',
-    phone: '123-456-7890',
-    url: 'https://randomuser.me/api/portraits/women/65.jpg',
-    status: 'active',
-  },
-  {
-    id: 2,
-    name: 'Bob',
-    jobTitle: 'Backend Developer',
-    department: 'Engineering',
-    email: 'bob.smith@example.com',
-    phone: '321-654-0987',
-    url: 'https://randomuser.me/api/portraits/men/43.jpg',
-    status: 'resigned',
-  },
-  {
-    id: 3,
-    name: 'Evans',
-    jobTitle: 'HR Manager',
-    department: 'Human Resources',
-    email: 'claire.evans@example.com',
-    phone: '456-789-0123',
-    url: 'https://randomuser.me/api/portraits/women/44.jpg',
-    status: 'leave',
-  },
-  {
-    id: 4,
-    name: 'David',
-    jobTitle: 'Product Manager',
-    department: 'Product',
-    email: 'david.lee@example.com',
-    phone: '567-890-1234',
-    url: 'https://randomuser.me/api/portraits/men/34.jpg',
-    status: 'active',
-  },
-  {
-    id: 5,
-    name: 'Wilson',
-    jobTitle: 'UX Designer',
-    department: 'Design',
-    email: 'emma.wilson@example.com',
-    phone: '678-901-2345',
-    url: 'https://randomuser.me/api/portraits/women/52.jpg',
-    status: 'resigned',
-  },
-];
+const CreatePost = () => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
+  const [editingPost, setEditingPost] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
-export default function Profiles() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
-  const [departmentFilter, setDepartmentFilter] = useState('');
-  const [sortOption, setSortOption] = useState('nameAsc');
+  useEffect(() => {
+    const saved = loadPosts();
+    if (saved && Array.isArray(saved)) {
+      setPosts(saved);
+    }
+  }, []);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    savePosts(posts);
+  }, [posts]);
 
-  const roles = useMemo(
-    () => [...new Set(mockProfiles.map((p) => p.jobTitle.split(' ')[0]))],
-    []
-  );
-  const departments = useMemo(
-    () => [...new Set(mockProfiles.map((p) => p.department))],
-    []
-  );
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const filtered = useMemo(() => {
-    return mockProfiles
-      .filter(
-        (p) =>
-          (!roleFilter || p.jobTitle.includes(roleFilter)) &&
-          (!departmentFilter || p.department === departmentFilter) &&
-          p.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .sort((a, b) => {
-        switch (sortOption) {
-          case 'nameAsc':
-            return a.name.localeCompare(b.name);
-          case 'nameDesc':
-            return b.name.localeCompare(a.name);
-          case 'deptAsc':
-            return a.department.localeCompare(b.department);
-          case 'deptDesc':
-            return b.department.localeCompare(a.department);
-          default:
-            return 0;
-        }
-      });
-  }, [searchTerm, roleFilter, departmentFilter, sortOption]);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const postImage = reader.result || null;
+      const newPost = {
+        title,
+        description,
+        image: postImage,
+        id: editingPost ? editingPost.id : Date.now(),
+      };
+
+      if (editingPost) {
+        const updated = posts.map((post) =>
+          post.id === editingPost.id ? newPost : post
+        );
+        setPosts(updated);
+        setSuccessMessage("Post updated successfully!");
+      } else {
+        setPosts([newPost, ...posts]);
+        setSuccessMessage("Post created successfully!");
+      }
+
+      setTitle("");
+      setDescription("");
+      setImage(null);
+      setEditingPost(null);
+      setShowModal(false);
+
+      setTimeout(() => setSuccessMessage(""), 3000);
+    };
+
+    if (image) {
+      reader.readAsDataURL(image);
+    } else {
+      reader.onloadend();
+    }
+  };
+
+  const handleEdit = (post) => {
+    setEditingPost(post);
+    setTitle(post.title);
+    setDescription(post.description);
+    setImage(null);
+    setShowModal(true);
+  };
+  const handleDeletePost = (id) => {
+  const filteredPosts = posts.filter(post => post.id !== id);
+  setPosts(filteredPosts);
+  localStorage.setItem("posts", JSON.stringify(filteredPosts));
+};
 
   return (
-    <div className="page">
-      <div className="container-wrapper">
-        <h1 className="heading">Employee Directory</h1>
+    <div className="create-post-container">
+      <div className="create-post-launcher" onClick={() => setShowModal(true)}>
+        <span className="plus-icon">+</span>
+        <span>Create a Post</span>
+      </div>
 
-        <div className="filters">
-          <input
-            type="text"
-            placeholder="Search by name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input-box"
-          />
-          <div className="select-group">
-            <select
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className="select-box"
-            >
-              <option value="">All Roles</option>
-              {roles.map((role) => (
-                <option key={role} value={role}>
-                  {role}
-                </option>
-              ))}
-            </select>
-            <select
-              value={departmentFilter}
-              onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="select-box"
-            >
-              <option value="">All Departments</option>
-              {departments.map((dep) => (
-                <option key={dep} value={dep}>
-                  {dep}
-                </option>
-              ))}
-            </select>
-            <select
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-              className="select-box"
-            >
-              <option value="nameAsc">Name (A-Z)</option>
-              <option value="nameDesc">Name (Z-A)</option>
-              <option value="deptAsc">Department (A-Z)</option>
-              <option value="deptDesc">Department (Z-A)</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid-layout">
-          {filtered.map((emp) => (
-            <div key={emp.id} className="card">
-              <div
-                className={`status-dot ${emp.status}`}
-                title={emp.status.charAt(0).toUpperCase() + emp.status.slice(1)}
-              ></div>
-              <img className="avatar" src={emp.url} alt={emp.name} />
-              <h2 className="name">{emp.name}</h2>
-              <p className="title">{emp.jobTitle}</p>
-              <p className="department">{emp.department}</p>
-              <button
-                className="view-profile-btn"
-                onClick={() => navigate(`/profile/${emp.id}`)}
-                type="button"
-              >
-                View Profile
-              </button>
-            </div>
-          ))}
+   <div className="post-list">
+  <h3>Recent Posts</h3>
+  {posts.length === 0 ? (
+    <p>No posts created yet.</p>
+  ) : (
+    posts.map((post) => (
+      <div key={post.id} className="post-card animate-fade-in">
+        <h4>{post.title}</h4>
+        <p>{post.description}</p>
+        {post.image && <img src={post.image} alt="Post" className="post-image" />}
+        <div className="button-group">
+          <button className="edit-button" onClick={() => handleEdit(post)}>Edit</button>
+          <button className="delete-button" onClick={() => handleDeletePost(post.id)}>Delete</button>
         </div>
       </div>
+    ))
+  )}
+</div>
+
+
+
+
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content animate-slide-up" onClick={(e) => e.stopPropagation()}>
+            <h2>{editingPost ? "Edit Post" : "Create a Post"}</h2>
+            <form onSubmit={handleSubmit} className="create-post-form">
+              <input
+                type="text"
+                placeholder="Post Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+              <textarea
+                placeholder="Post Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              ></textarea>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImage(e.target.files[0])}
+              />
+              <button type="submit">{editingPost ? "Update" : "Submit"}</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {successMessage && <p className="success-message animate-fade-in">{successMessage}</p>}
     </div>
   );
-}
+};
+
+export default CreatePost;

@@ -1,86 +1,281 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-.page {
-  @apply min-h-screen bg-gray-100 py-8;
+/* Container */
+.create-post-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f4ff;
+  border-radius: 12px;
+  box-shadow: 0 6px 14px rgba(0,0,128,0.15);
 }
 
-.container-wrapper {
-  @apply container mx-auto px-4;
+/* Create Post launcher */
+.create-post-launcher {
+  cursor: pointer;
+  background: #4a90e2;
+  color: white;
+  font-weight: 600;
+  font-size: 22px;
+  border-radius: 10px;
+  padding: 24px 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  width: fit-content;
+  box-shadow: 0 4px 8px rgba(74,144,226,0.4);
+  transition: background-color 0.3s ease;
 }
 
-.heading {
-  @apply text-3xl font-bold mb-6 text-center text-gray-800;
+.create-post-launcher:hover {
+  background: #357ABD;
 }
 
-.filters {
-  @apply flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0;
+/* Plus icon */
+.plus-icon {
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 1;
+  user-select: none;
 }
 
-.input-box {
-  @apply w-full sm:w-1/3 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
+/* Search input */
+.search-input {
+  margin: 20px 0;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 16px;
+  border: 2px solid #4a90e2;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s ease;
 }
 
-.select-group {
-  @apply flex space-x-4;
+.search-input:focus {
+  border-color: #2a5fb8;
 }
 
-.select-box {
-  @apply border border-gray-300 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500;
+/* Post list */
+.post-list h3 {
+  color: #1a237e;
+  margin-bottom: 12px;
+  font-size: 24px;
 }
 
-.grid-layout {
-  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
+/* Individual post card */
+.post-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07);
+  transition: box-shadow 0.3s ease;
+  position: relative;
 }
 
-.card {
-  @apply bg-white rounded-xl shadow-md p-6 text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-xl cursor-pointer relative;
-  animation: fadeIn 0.5s ease-out;
+.post-card:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-.avatar {
-  @apply h-24 w-24 rounded-full mx-auto object-cover;
+.post-card h4 {
+  margin: 0 0 8px;
+  color: #0d47a1;
 }
 
-.name {
-  @apply mt-4 text-xl font-semibold text-gray-800;
+.post-card p {
+  margin: 0 0 12px;
+  color: #333;
+  line-height: 1.4;
 }
 
-.title,
-.department {
-  @apply text-gray-600;
+/* Post image */
+.post-image {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  object-fit: contain;
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
 }
 
-.view-profile-btn {
-  @apply mt-4 bg-gray-400 text-white py-1 px-3 rounded-full text-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500;
+/* Buttons container */
+.button-group {
+  display: flex;
+  gap: 10px;
 }
 
-/* Status Dot */
-.status-dot {
-  @apply absolute top-2 right-2 w-4 h-4 rounded-full;
-  border: 2px solid white;
+/* Edit and Delete buttons */
+.edit-button, .delete-button {
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.25s ease;
+  user-select: none;
 }
 
-.status-dot.active {
-  @apply bg-green-500;
+.edit-button {
+  background-color: #4caf50;
+  color: white;
 }
 
-.status-dot.resigned {
-  @apply bg-red-500;
+.edit-button:hover {
+  background-color: #388e3c;
 }
 
-.status-dot.leave {
-  @apply bg-yellow-400;
+.delete-button {
+  background-color: #e53935;
+  color: white;
 }
 
+.delete-button:hover {
+  background-color: #b71c1c;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 10, 30, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Modal content */
+.modal-content {
+  background: #fff;
+  border-radius: 14px;
+  padding: 30px 35px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 12px 30px rgba(0, 0, 80, 0.2);
+  position: relative;
+}
+
+/* Form inside modal */
+.create-post-form input[type="text"],
+.create-post-form textarea,
+.create-post-form input[type="file"] {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 2px solid #4a90e2;
+  font-size: 16px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.create-post-form input[type="text"]:focus,
+.create-post-form textarea:focus {
+  border-color: #2a5fb8;
+}
+
+/* Submit button */
+.create-post-form button {
+  background-color: #4a90e2;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.create-post-form button:hover {
+  background-color: #357abd;
+}
+
+/* Image preview */
+.preview-image {
+  max-width: 100%;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
+  object-fit: contain;
+}
+
+/* Success message */
+.success-message {
+  margin-top: 15px;
+  text-align: center;
+  color: #2e7d32;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Animations */
 @keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes slideUp {
   from {
+    transform: translateY(30px);
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
+    opacity: 1;
   }
 }
+
+.animate-slide-up {
+  animation: slideUp 0.35s ease forwards;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .create-post-launcher {
+    font-size: 18px;
+    padding: 10px 18px;
+  }
+
+  .plus-icon {
+    font-size: 26px;
+  }
+
+  .post-card {
+    padding: 12px 16px;
+  }
+
+  .create-post-form button {
+    font-size: 16px;
+    padding: 10px 18px;
+  }
+}
+.delete-button {
+  cursor: pointer;
+  padding: 6px 14px;
+  margin-left: 8px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  background-color: #e53935;
+  color: white;
+  transition: background-color 0.25s ease;
+}
+
+.delete-button:hover {
+  background-color: #b71c1c;
+}
+
+.button-group {
+  margin-top: 10px;
+}
+
