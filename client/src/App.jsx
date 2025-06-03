@@ -4,7 +4,7 @@ import Dashboard from "./components/Dashboard";
 import Chat from "./components/Chat";
 import CreatePost from "./components/CreatePost";
 import Posts from "./components/Posts";
-import Leaderboard from "./components/Recognition";
+import Recognition from "./components/Recognition";
 import Events from "./components/Events";
 import "./App.css";
 
