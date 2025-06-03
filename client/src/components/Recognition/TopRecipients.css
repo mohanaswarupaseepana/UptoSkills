@@ -1,0 +1,133 @@
+/* TopRecipients Component Styles */
+.top-recipients-card {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.top-recipients-header {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.top-recipients-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.top-recipients-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recipient-item {
+  display: flex;
+  align-items: center;
+}
+
+.recipient-item.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 0 -8px;
+}
+
+.recipient-item.clickable:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.recipient-rank {
+  width: 24px;
+  height: 24px;
+  background-color: #f3f4f6;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.recipient-rank-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.recipient-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.recipient-avatar.blue {
+  background-color: #3b82f6;
+}
+
+.recipient-avatar.gray {
+  background-color: #6b7280;
+}
+
+.recipient-avatar.light-gray {
+  background-color: #9ca3af;
+}
+
+.recipient-avatar-text {
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.recipient-info {
+  flex: 1;
+}
+
+.recipient-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+  margin: 0 0 2px 0;
+}
+
+.recipient-stats {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .top-recipients-content {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .top-recipients-header {
+    padding: 12px;
+  }
+
+  .recipient-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .recipient-rank {
+    width: 20px;
+    height: 20px;
+  }
+
+  .recipient-rank-number {
+    font-size: 12px;
+  }
+}

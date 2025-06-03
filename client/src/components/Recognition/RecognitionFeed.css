@@ -1,0 +1,721 @@
+/* RecognitionFeed Component Styles */
+.recognition-feed-card {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.recognition-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recognition-feed-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.recognition-count {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-toggle-btn:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.filter-toggle-btn.active {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.filter-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.filter-count {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+
+/* Filter Panel */
+.filter-panel {
+  padding: 16px 24px;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.filter-row {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 150px;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-label-icon {
+  width: 12px;
+  height: 12px;
+  color: #6b7280;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.clear-filters-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  height: fit-content;
+}
+
+.clear-filters-btn:hover {
+  background-color: #dc2626;
+}
+
+.recognition-feed-content {
+  divide-y: 1px solid #e5e7eb;
+}
+
+.recognition-item {
+  padding: 12px;
+}
+
+.recognition-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.recognition-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.recognition-header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Own Recognition Badge */
+.own-recognition-badge {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+/* Recognition Dropdown */
+.recognition-dropdown {
+  position: relative;
+}
+
+.recognition-dropdown-trigger {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+.recognition-dropdown-trigger:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.dropdown-icon {
+  width: 18px;
+  height: 18px;
+  color: #3b82f6;
+}
+
+.recognition-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  min-width: 160px;
+  overflow: hidden;
+  animation: dropdownSlideIn 0.2s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recognition-dropdown-item {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.recognition-dropdown-item:hover {
+  background: #f9fafb;
+}
+
+.dropdown-item-icon {
+  width: 16px;
+  height: 16px;
+  color: #3b82f6;
+}
+
+.recognition-avatar {
+  width: 28px;
+  height: 28px;
+  background-color: #f97316;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recognition-avatar-text {
+  color: white;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.recognition-from {
+  margin: 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.recognition-arrow {
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+  margin: 0 4px;
+}
+
+.recognition-to {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.recognition-timestamp {
+  margin-left: auto;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.recognition-message {
+  font-size: 13px;
+  color: #374151;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.recognition-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #6b7280;
+}
+
+.recognition-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-size: 14px;
+}
+
+.recognition-action:hover.like-action {
+  color: #ef4444;
+}
+
+.recognition-action:hover.comment-action {
+  color: #3b82f6;
+}
+
+.recognition-action:hover.share-action {
+  color: #10b981;
+}
+
+.recognition-action.liked {
+  color: #ef4444;
+}
+
+.recognition-action-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.recognition-action-icon.filled {
+  fill: currentColor;
+}
+
+/* Comments Section */
+.comments-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.comments-list {
+  margin-bottom: 12px;
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.comment-avatar {
+  width: 24px;
+  height: 24px;
+  background-color: #6b7280;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.comment-avatar span {
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.comment-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.comment-author {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 2px;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.add-comment {
+  margin-top: 12px;
+}
+
+.comment-input-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.comment-input:focus {
+  border-color: #3b82f6;
+}
+
+.comment-send-btn {
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.comment-send-btn:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.comment-send-btn:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.send-icon {
+  width: 14px;
+  height: 14px;
+  color: white;
+}
+
+/* Recognition Attachments */
+.recognition-attachments {
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.attachment-preview {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.attachment-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.attachment-file {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #f9fafb;
+  gap: 8px;
+}
+
+.attachment-file-icon {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+}
+
+.attachment-file-name {
+  font-size: 12px;
+  color: #374151;
+}
+
+/* Comment Upload Functionality */
+.comment-input-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.upload-btn {
+  background-color: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.upload-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.upload-icon {
+  width: 14px;
+  height: 14px;
+  color: #6b7280;
+}
+
+/* Comment Attachments Preview */
+.comment-attachments-preview {
+  margin: 8px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.comment-attachment-item {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.comment-attachment-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  display: block;
+}
+
+.comment-attachment-file {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  background-color: #f9fafb;
+  gap: 6px;
+  min-width: 60px;
+}
+
+.comment-attachment-icon {
+  width: 12px;
+  height: 12px;
+  color: #6b7280;
+}
+
+.comment-attachment-name {
+  font-size: 10px;
+  color: #374151;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove-attachment-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.remove-attachment-btn:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Comment Attachments Display */
+.comment-attachments {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.comment-attachment-display {
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.comment-attachment-display-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  display: block;
+}
+
+.comment-attachment-display-file {
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  background-color: #f9fafb;
+  gap: 4px;
+}
+
+.comment-attachment-display-icon {
+  width: 12px;
+  height: 12px;
+  color: #6b7280;
+}
+
+.comment-attachment-display-file span {
+  font-size: 10px;
+  color: #374151;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Responsive Design for Filters */
+@media (max-width: 768px) {
+  .recognition-feed-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .filter-panel {
+    padding: 12px 16px;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .filter-group {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .clear-filters-btn {
+    width: 100%;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .recognition-item {
+    padding: 12px;
+  }
+
+  .recognition-feed-header {
+    padding: 12px;
+  }
+
+  .recognition-header {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .recognition-timestamp {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 4px;
+  }
+}

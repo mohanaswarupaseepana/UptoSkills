@@ -1,0 +1,87 @@
+/* MonthlyStats Component Styles */
+.monthly-stats-card {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.monthly-stats-header {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.monthly-stats-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.monthly-stats-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stat-progress-container {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.stat-progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.stat-progress-bar.blue {
+  background-color: #3b82f6;
+}
+
+.stat-progress-bar.green {
+  background-color: #10b981;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .monthly-stats-content {
+    padding: 12px;
+    gap: 20px;
+  }
+  
+  .monthly-stats-header {
+    padding: 12px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+}
