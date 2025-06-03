@@ -21,7 +21,7 @@ function App() {
         return <CreatePost />;
       case "posts":
         return <Posts />;
-      case "leaderboard":
+      case "recognition":
         return <Recognition />;
       case "events":
         return <Events />;
