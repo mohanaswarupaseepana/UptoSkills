@@ -26,7 +26,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
       icon: "📄",
     },
     {
-      id: "recognitio",
+      id: "recognition",
       name: "Recognition",
       icon: "🏆",
     },
