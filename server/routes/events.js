@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const Event = require("../models/event"); // ✅ Correct import
+const multer = require("multer"); // ⭐️ Import multer
+
+// ⭐️ Configure multer for memory storage
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all events
 router.get("/", async (req, res, next) => {
@@ -26,10 +30,27 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // Create a new event
-router.post("/", async (req, res) => {
+// ⭐️ Apply multer middleware here. 'media' must match the key in your FormData.
+router.post("/", upload.single('media'), async (req, res) => {
   try {
+    // ⭐️ Multer adds text fields to req.body and the file to req.file
     console.log("📥 POST request body:", req.body);
-    const newEvent = new Event(req.body); // ✅ Renamed
+    console.log("📄 POST request file:", req.file);
+
+    const { title, description } = req.body;
+    
+    // You'll need to handle the file upload to a service like Cloudinary or S3
+    // and get a URL. For now, let's assume a placeholder.
+    // In a real app, you would upload req.file.buffer to your cloud storage.
+    
+    const newEventData = {
+        title,
+        description,
+        // mediaURL: 'placeholder_url_from_your_storage_service', // Replace with actual URL
+        // mediaType: req.file ? req.file.mimetype.split('/')[0] : undefined
+    };
+    
+    const newEvent = new Event(newEventData); // ✅ Renamed
     const savedEvent = await newEvent.save(); // ✅ Renamed
     res.status(201).json(savedEvent);
   } catch (error) {
@@ -39,12 +60,17 @@ router.post("/", async (req, res) => {
 });
 
 // Update an event by id
-router.put("/:id", async (req, res, next) => {
+// ⭐️ Also apply multer middleware to the PUT route
+router.put("/:id", upload.single('media'), async (req, res, next) => {
   try {
     const { title, description } = req.body;
+    
+    // Again, handle the file if it exists (req.file)
+    // and update the mediaURL and mediaType accordingly.
+    
     const updatedEvent = await Event.findByIdAndUpdate(
       req.params.id,
-      { title, description },
+      { title, description /*, updated media fields */ },
       { new: true, runValidators: true }
     );
     if (!updatedEvent) {

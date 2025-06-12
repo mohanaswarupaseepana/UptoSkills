@@ -4,27 +4,33 @@ const eventSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    trim: true,
   },
   description: {
     type: String,
     required: true,
   },
-  media: {
-    type: {
-      type: String, // e.g., "image", "video"
-      enum: ["image", "video"],
-      required: false,
-    },
-    url: {
-      type: String,
-      required: false,
-    },
+  mediaURL: {
+    type: String,
+    required: false,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  mediaType: {
+    type: String,
+    required: false,
   },
+}, {
+  timestamps: true, // This adds 'createdAt' and 'updatedAt' fields
+});
+
+eventSchema.set('toJSON', {
+  virtuals: true,
+  // This transform function is called for every document
+  transform: (doc, ret) => {
+    // It creates a new field 'id' with the value of the '_id' field
+    ret.id = ret._id; 
+    // Then it deletes the original '_id' and '__v' fields
+    delete ret._id;
+    delete ret.__v;
+  }
 });
 
 module.exports = mongoose.model("Event", eventSchema);
