@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+
 const CreatePost = () => {
   const [posts, setPosts] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -12,14 +14,13 @@ const CreatePost = () => {
 
   const users = ["@alice", "@bob", "@carol", "@dave"]; // Mentionable users
   const emojiList = [
-  "😀", "😁", "😂", "🤣", "😊", "😉", "😍", "🥰", "😘", "😋", "🤪", "😎", "😭", "😤", "😡", "🤯", "🥳", "😅", "🤔",
-  "❤", "💕", "💖", "💗", "💘", "💝", "💞", "💟", "❣",
-  "👍", "👎", "👏", "🙌", "🙏", "🤝", "👋", "🤞", "✌", "👊",
-  "🎉", "🎊", "🎈", "🥂", "🍾", "✨", "🔥", "🚀",
-  "💻", "📱", "🖥", "📸", "🎥", "🎤", "📊", "📈", "📚", "🧠", "💡",
-  "🌈", "🌤", "❄", "🌙", "⭐", "🌻", "🌺"
-];
-
+    "😀", "😁", "😂", "🤣", "😊", "😉", "😍", "🥰", "😘", "😋", "🤪", "😎", "😭", "😤", "😡", "🤯", "🥳", "😅", "🤔",
+    "❤", "💕", "💖", "💗", "💘", "💝", "💞", "💟", "❣",
+    "👍", "👎", "👏", "🙌", "🙏", "🤝", "👋", "🤞", "✌", "👊",
+    "🎉", "🎊", "🎈", "🥂", "🍾", "✨", "🔥", "🚀",
+    "💻", "📱", "🖥", "📸", "🎥", "🎤", "📊", "📈", "📚", "🧠", "💡",
+    "🌈", "🌤", "❄", "🌙", "⭐", "🌻", "🌺"
+  ];
 
   const descriptionRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -32,15 +33,18 @@ const CreatePost = () => {
     mediaType: "",
   });
 
+  // Fetch posts from backend on mount
   useEffect(() => {
-    const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
-    setPosts(savedPosts);
+    axios
+      .get("http://localhost:4000/api/events")
+      .then((res) => {
+        // Assuming backend sends array of posts with unique id, title, description, mediaURL, mediaType
+        setPosts(res.data);
+      })
+      .catch((err) => {
+        console.error("❌ Error fetching posts:", err);
+      });
   }, []);
-
-  const savePosts = (posts) => {
-    const safePosts = posts.map(({ mediaFile, ...rest }) => rest);
-    localStorage.setItem("posts", JSON.stringify(safePosts));
-  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -69,56 +73,87 @@ const CreatePost = () => {
     setModalOpen(true);
   };
 
-  const handleCreateOrEditPost = (e) => {
-    e.preventDefault();
-    if (!newPost.title || !newPost.description) {
-      alert("Title and description are required.");
-      return;
-    }
+const handleCreateOrEditPost = (e) => {
+  e.preventDefault();
 
-    if (editingPostId) {
-      const updatedPosts = posts.map((post) =>
-        post.id === editingPostId
-          ? {
-              ...post,
-              title: newPost.title,
-              description: newPost.description,
-              mediaURL: newPost.mediaURL,
-              mediaType: newPost.mediaType,
-            }
-          : post
-      );
-      setPosts(updatedPosts);
-      savePosts(updatedPosts);
-      setEditingPostId(null);
-    } else {
-      const postToAdd = {
-        id: Date.now(),
-        title: newPost.title,
-        description: newPost.description,
-        mediaURL: newPost.mediaURL,
-        mediaType: newPost.mediaType,
-      };
-      const updatedPosts = [postToAdd, ...posts];
-      setPosts(updatedPosts);
-      savePosts(updatedPosts);
-    }
+  if (!newPost.title || !newPost.description) {
+    alert("Title and description are required.");
+    return;
+  }
 
-    setNewPost({
-      title: "",
-      description: "",
-      mediaFile: null,
-      mediaURL: "",
-      mediaType: "",
-    });
-    setModalOpen(false);
-  };
+  const formData = new FormData();
+  formData.append("title", newPost.title);
+  formData.append("description", newPost.description);
+
+  // Append file if present
+  if (newPost.mediaFile) {
+    formData.append("media", newPost.mediaFile);
+  } else {
+    formData.append("mediaURL", newPost.mediaURL);
+    formData.append("mediaType", newPost.mediaType);
+  }
+
+  if (editingPostId) {
+    // PUT for editing (note: many servers expect POST for file uploads, check your backend)
+    axios
+      .put(`http://localhost:4000/api/events/${editingPostId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        const updatedPosts = posts.map((post) =>
+          post.id === editingPostId ? res.data : post
+        );
+        setPosts(updatedPosts);
+        setEditingPostId(null);
+        setModalOpen(false);
+        setNewPost({
+          title: "",
+          description: "",
+          mediaFile: null,
+          mediaURL: "",
+          mediaType: "",
+        });
+      })
+      .catch((err) => {
+        console.error("❌ Error updating post:", err);
+        alert("Failed to update post.");
+      });
+  } else {
+    // POST for creating
+    axios
+      .post("http://localhost:4000/api/events", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        setPosts([res.data, ...posts]);
+        setModalOpen(false);
+        setNewPost({
+          title: "",
+          description: "",
+          mediaFile: null,
+          mediaURL: "",
+          mediaType: "",
+        });
+      })
+      .catch((err) => {
+        console.error("❌ Error creating post:", err);
+        alert("Failed to create post.");
+      });
+  }
+};
+
 
   const handleDelete = () => {
-    const updatedPosts = posts.filter((post) => post.id !== confirmDeleteId);
-    setPosts(updatedPosts);
-    savePosts(updatedPosts);
-    setConfirmDeleteId(null);
+    axios
+      .delete(`http://localhost:4000/api/events/${confirmDeleteId}`)
+      .then(() => {
+        setPosts(posts.filter((post) => post.id !== confirmDeleteId));
+        setConfirmDeleteId(null);
+      })
+      .catch((err) => {
+        console.error("❌ Error deleting post:", err);
+        alert("Failed to delete post.");
+      });
   };
 
   const filteredPosts = posts.filter((post) =>
@@ -211,7 +246,7 @@ const CreatePost = () => {
               <h4 className="font-bold text-xl text-gray-900 mb-2">{post.title}</h4>
               <p className="text-gray-700">{post.description}</p>
               {post.mediaURL && post.mediaType === "image" && (
-                <img src={post.mediaURL} className="mt-4 rounded max-h-64 object-cover" />
+                <img src={post.mediaURL} className="mt-4 rounded max-h-64 object-cover" alt="media" />
               )}
               {post.mediaURL && post.mediaType === "video" && (
                 <video controls className="mt-4 rounded max-h-72 w-full">
@@ -303,7 +338,7 @@ const CreatePost = () => {
                       type="button"
                       onClick={() => handleEmojiSelect(emoji)}
                       className="text-2xl hover:scale-125 transition"
-                      aria-label={'Select emoji ${emoji}'}
+                      aria-label={`Select emoji ${emoji}`}
                     >
                       {emoji}
                     </button>
@@ -315,7 +350,7 @@ const CreatePost = () => {
               <div className="mt-2">
                 <input
                   type="file"
-                  accept="image/,video/"
+                  accept="image/*,video/*"
                   onChange={handleFileChange}
                   ref={fileInputRef}
                   className="hidden"
@@ -439,7 +474,7 @@ const CreatePost = () => {
               </video>
             )}
             <button
-              className="bg-indigo-600 text-white px-6 py-2 rounded shadow hover:bg-indigo-700"
+              className="bg-indigo-600 text-white px-6 py-3 rounded shadow hover:bg-indigo-700 transition"
               onClick={() => setDetailModalOpen(false)}
             >
               Close

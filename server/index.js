@@ -1,12 +1,13 @@
+require("dotenv").config({ path: __dirname + "/.env" });
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-require("dotenv").config({ path: __dirname + "/.env" });
+
 
 // Import database connection
 const connectDB = require("./config/database");
 
-// Import routes
+// Import routes - make sure the filename matches exactly (capital P)
 const eventRoutes = require("./routes/events");
 
 // Import middleware
@@ -30,7 +31,7 @@ app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 
 // Routes
-app.use("/api/events", eventRoutes);
+app.use("/api/events", eventRoutes)
 
 // Health check route
 app.get("/api/health", (req, res) => {
@@ -48,7 +49,7 @@ app.get("/", (req, res) => {
     message: "Welcome to HRMS Backend API",
     version: "1.0.0",
     endpoints: {
-      events: "/api/events",
+      posts: "/api/posts",
       health: "/api/health",
     },
   });
@@ -64,6 +65,7 @@ app.use("*", (req, res) => {
     error: "Route not found",
   });
 });
+
 
 const PORT = process.env.PORT || 8080;
 
