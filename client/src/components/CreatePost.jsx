@@ -35,10 +35,10 @@ const CreatePost = () => {
 
   // Fetch posts from backend on mount
   useEffect(() => {
+    // UPDATED: Changed endpoint from /api/events to /api/createposts
     axios
-      .get("http://localhost:4000/api/events")
+      .get("http://localhost:4000/api/createposts")
       .then((res) => {
-        // Assuming backend sends array of posts with unique id, title, description, mediaURL, mediaType
         setPosts(res.data);
       })
       .catch((err) => {
@@ -48,7 +48,15 @@ const CreatePost = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      setNewPost((prev) => ({
+        ...prev,
+        mediaFile: null,
+        mediaURL: "",
+        mediaType: "",
+      }));
+      return;
+    }
 
     const fileType = file.type.startsWith("video") ? "video" : "image";
     const previewURL = URL.createObjectURL(file);
@@ -73,79 +81,86 @@ const CreatePost = () => {
     setModalOpen(true);
   };
 
-const handleCreateOrEditPost = (e) => {
-  e.preventDefault();
+  // NEW FUNCTION: To open the modal for creating a new post
+  const openCreatePostModal = () => {
+    setEditingPostId(null); // Ensure we are creating, not editing
+    setNewPost({ // Reset the form fields
+      title: "",
+      description: "",
+      mediaFile: null,
+      mediaURL: "",
+      mediaType: "",
+    });
+    setMentionSuggestions([]);
+    setEmojiPickerOpen(false);
+    setModalOpen(true); // Open the modal
+  };
 
-  if (!newPost.title || !newPost.description) {
-    alert("Title and description are required.");
-    return;
-  }
 
-  const formData = new FormData();
-  formData.append("title", newPost.title);
-  formData.append("description", newPost.description);
+  const handleCreateOrEditPost = async (e) => {
+    e.preventDefault();
 
-  // Append file if present
-  if (newPost.mediaFile) {
-    formData.append("media", newPost.mediaFile);
-  } else {
-    formData.append("mediaURL", newPost.mediaURL);
-    formData.append("mediaType", newPost.mediaType);
-  }
+    if (!newPost.title || !newPost.description) {
+      alert("Title and description are required.");
+      return;
+    }
 
-  if (editingPostId) {
-    // PUT for editing (note: many servers expect POST for file uploads, check your backend)
-    axios
-      .put(`http://localhost:4000/api/events/${editingPostId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((res) => {
+    const formData = new FormData();
+    formData.append("title", newPost.title);
+    formData.append("description", newPost.description);
+
+    if (newPost.mediaFile) {
+      formData.append("media", newPost.mediaFile);
+    } else {
+      formData.append("mediaURL", newPost.mediaURL || '');
+      formData.append("mediaType", newPost.mediaType || '');
+    }
+
+    try {
+      let res;
+      if (editingPostId) {
+        // UPDATED: Changed endpoint from /api/events to /api/createposts
+        res = await axios.put(`http://localhost:4000/api/createposts/${editingPostId}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         const updatedPosts = posts.map((post) =>
           post.id === editingPostId ? res.data : post
         );
         setPosts(updatedPosts);
         setEditingPostId(null);
         setModalOpen(false);
-        setNewPost({
-          title: "",
-          description: "",
-          mediaFile: null,
-          mediaURL: "",
-          mediaType: "",
+        if (newPost.mediaFile && newPost.mediaURL) {
+          URL.revokeObjectURL(newPost.mediaURL);
+        }
+      } else {
+        // UPDATED: Changed endpoint from /api/events to /api/createposts
+        res = await axios.post("http://localhost:4000/api/createposts", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
         });
-      })
-      .catch((err) => {
-        console.error("❌ Error updating post:", err);
-        alert("Failed to update post.");
-      });
-  } else {
-    // POST for creating
-    axios
-      .post("http://localhost:4000/api/events", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((res) => {
         setPosts([res.data, ...posts]);
         setModalOpen(false);
-        setNewPost({
-          title: "",
-          description: "",
-          mediaFile: null,
-          mediaURL: "",
-          mediaType: "",
-        });
-      })
-      .catch((err) => {
-        console.error("❌ Error creating post:", err);
-        alert("Failed to create post.");
+        if (newPost.mediaFile && newPost.mediaURL) {
+          URL.revokeObjectURL(newPost.mediaURL);
+        }
+      }
+      setNewPost({
+        title: "",
+        description: "",
+        mediaFile: null,
+        mediaURL: "",
+        mediaType: "",
       });
-  }
-};
+    } catch (err) {
+      console.error("❌ Error handling post:", err);
+      alert(`Failed to ${editingPostId ? "update" : "create"} post.`);
+    }
+  };
 
 
   const handleDelete = () => {
+    // UPDATED: Changed endpoint from /api/events to /api/createposts
     axios
-      .delete(`http://localhost:4000/api/events/${confirmDeleteId}`)
+      .delete(`http://localhost:4000/api/createposts/${confirmDeleteId}`)
       .then(() => {
         setPosts(posts.filter((post) => post.id !== confirmDeleteId));
         setConfirmDeleteId(null);
@@ -187,7 +202,7 @@ const handleCreateOrEditPost = (e) => {
 
   const handleSuggestionClick = (mention) => {
     const parts = newPost.description.split(" ");
-    parts.pop(); // remove current @keyword
+    parts.pop();
     const updatedText = [...parts, mention].join(" ") + " ";
     setNewPost((prev) => ({
       ...prev,
@@ -196,23 +211,31 @@ const handleCreateOrEditPost = (e) => {
     setMentionSuggestions([]);
   };
 
+  const closeModalAndReset = () => {
+    setModalOpen(false);
+    setEditingPostId(null);
+    if (newPost.mediaFile && newPost.mediaURL) {
+      URL.revokeObjectURL(newPost.mediaURL);
+    }
+    setNewPost({
+      title: "",
+      description: "",
+      mediaFile: null,
+      mediaURL: "",
+      mediaType: "",
+    });
+    setMentionSuggestions([]);
+    setEmojiPickerOpen(false);
+  };
+
+
   return (
     <div className="p-6 max-w-5xl mx-auto min-h-screen flex flex-col">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <button
           className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition duration-300"
-          onClick={() => {
-            setNewPost({
-              title: "",
-              description: "",
-              mediaFile: null,
-              mediaURL: "",
-              mediaType: "",
-            });
-            setEditingPostId(null);
-            setModalOpen(true);
-          }}
+          onClick={openCreatePostModal} // Corrected handler
         >
           + Create a Post
         </button>
@@ -237,7 +260,7 @@ const handleCreateOrEditPost = (e) => {
           {filteredPosts.map((post) => (
             <div
               key={post.id}
-              className="bg-white p-5 rounded-xl shadow hover:shadow-lg transition"
+              className="bg-white p-5 rounded-xl shadow hover:shadow-lg transition cursor-pointer"
               onClick={() => {
                 setSelectedPost(post);
                 setDetailModalOpen(true);
@@ -246,11 +269,12 @@ const handleCreateOrEditPost = (e) => {
               <h4 className="font-bold text-xl text-gray-900 mb-2">{post.title}</h4>
               <p className="text-gray-700">{post.description}</p>
               {post.mediaURL && post.mediaType === "image" && (
-                <img src={post.mediaURL} className="mt-4 rounded max-h-64 object-cover" alt="media" />
+                <img src={post.mediaURL} className="mt-4 rounded max-h-64 object-cover w-full" alt="media" />
               )}
               {post.mediaURL && post.mediaType === "video" && (
                 <video controls className="mt-4 rounded max-h-72 w-full">
                   <source src={post.mediaURL} type="video/mp4" />
+                  Your browser does not support the video tag.
                 </video>
               )}
               <div className="mt-4 flex gap-3 justify-end">
@@ -283,7 +307,7 @@ const handleCreateOrEditPost = (e) => {
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
           <div
             className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-lg space-y-4"
-            style={{ maxHeight: "80vh", overflowY: "auto" }} // Added scrollbar styles
+            style={{ maxHeight: "80vh", overflowY: "auto" }}
           >
             <h2 className="text-2xl font-bold text-gray-900">
               {editingPostId ? "Edit Post" : "Create Post"}
@@ -305,7 +329,6 @@ const handleCreateOrEditPost = (e) => {
                   rows={4}
                   className="w-full p-3 border border-gray-300 rounded-lg resize-none pr-12"
                 />
-                {/* Emoji icon inside textarea container */}
                 <button
                   type="button"
                   onClick={() => setEmojiPickerOpen((prev) => !prev)}
@@ -346,7 +369,6 @@ const handleCreateOrEditPost = (e) => {
                 </div>
               )}
 
-              {/* Custom File Input */}
               <div className="mt-2">
                 <input
                   type="file"
@@ -377,25 +399,39 @@ const handleCreateOrEditPost = (e) => {
                   Media Picker
                 </label>
                 <span className="ml-3 text-gray-700">
-                  {newPost.mediaFile ? newPost.mediaFile.name : "No file selected"}
+                  {newPost.mediaFile?.name || (newPost.mediaURL ? "Existing Media" : "No file selected")}
                 </span>
+                {(newPost.mediaFile || newPost.mediaURL) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewPost(prev => ({ ...prev, mediaFile: null, mediaURL: "", mediaType: "" }));
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
+                    className="ml-3 text-red-500 hover:text-red-700 text-sm"
+                  >
+                    Clear Media
+                  </button>
+                )}
               </div>
 
-              {/* Preview of selected media */}
               {newPost.mediaURL && (
                 <div className="mt-4">
                   {newPost.mediaType === "image" ? (
                     <img
                       src={newPost.mediaURL}
                       alt="Preview"
-                      className="max-h-60 rounded object-contain"
+                      className="max-h-60 rounded object-contain w-full"
                     />
                   ) : (
                     <video
                       controls
                       className="max-h-60 rounded w-full"
                       src={newPost.mediaURL}
-                    />
+                      type="video/mp4"
+                    >
+                      Your browser does not support the video tag.
+                    </video>
                   )}
                 </div>
               )}
@@ -403,18 +439,7 @@ const handleCreateOrEditPost = (e) => {
               <div className="flex justify-end gap-4 mt-6">
                 <button
                   type="button"
-                  onClick={() => {
-                    setModalOpen(false);
-                    setEditingPostId(null);
-                    setNewPost({
-                      title: "",
-                      description: "",
-                      mediaFile: null,
-                      mediaURL: "",
-                      mediaType: "",
-                    });
-                    setMentionSuggestions([]);
-                  }}
+                  onClick={closeModalAndReset}
                   className="bg-gray-400 px-5 py-2 rounded shadow hover:bg-gray-500 transition"
                 >
                   Cancel
@@ -471,6 +496,7 @@ const handleCreateOrEditPost = (e) => {
             {selectedPost.mediaURL && selectedPost.mediaType === "video" && (
               <video controls className="rounded mb-4 max-h-96 w-full">
                 <source src={selectedPost.mediaURL} type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
             )}
             <button
